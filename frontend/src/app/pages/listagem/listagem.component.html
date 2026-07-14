@@ -1,1 +1,49 @@
-<p>listagem works!</p>
+<div class="listagem-container">
+  <div class="header-actions">
+    <h2>Listagem de Pedidos</h2>
+    <div>
+      <button mat-button routerLink="/dashboard">Voltar ao Dashboard</button>
+      <button mat-flat-button color="primary" routerLink="/cadastro" [disabled]="!podeAdicionar()">
+        Adicionar Pedido
+      </button>
+    </div>
+  </div>
+
+  <table mat-table [dataSource]="pedidos" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="cliente">
+      <th mat-header-cell *matHeaderCellDef> Cliente </th>
+      <td mat-cell *matCellDef="let p"> {{p.displayName}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="itens">
+      <th mat-header-cell *matHeaderCellDef> Itens </th>
+      <td mat-cell *matCellDef="let p"> {{p.itens}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="peso">
+      <th mat-header-cell *matHeaderCellDef> Peso (kg) </th>
+      <td mat-cell *matCellDef="let p"> {{(p.peso / 1000) | number:'1.2-2'}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let p"> <strong>{{p.status}}</strong> </td>
+    </ng-container>
+
+    <ng-container matColumnDef="acoes">
+      <th mat-header-cell *matHeaderCellDef> Ações </th>
+      <td mat-cell *matCellDef="let p">
+        <button mat-button color="primary" *ngIf="podeMudarStatus(p.status, 'EM_PROCESSAMENTO')" (click)="alterarStatus(p.id, 'EM_PROCESSAMENTO')">Processar</button>
+        <button mat-button color="accent" *ngIf="podeMudarStatus(p.status, 'PAUSADO')" (click)="alterarStatus(p.id, 'PAUSADO')">Pausar</button>
+        <button mat-button color="warn" *ngIf="podeMudarStatus(p.status, 'CANCELADO')" (click)="alterarStatus(p.id, 'CANCELADO')">Cancelar</button>
+        <button mat-icon-button color="warn" (click)="excluir(p.id)" title="Excluir">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
