@@ -1,1 +1,44 @@
-<p>cadastro works!</p>
+<div class="cadastro-container">
+  <div class="header-actions">
+    <h2>Cadastrar Novo Pedido</h2>
+    <button mat-button routerLink="/listagem">Voltar à Listagem</button>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <div *ngIf="bloqueado" class="alerta-bloqueado">
+        Capacidade máxima de 5 pedidos atingida. Não é possível cadastrar novos pedidos no momento.
+      </div>
+
+      <form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()" *ngIf="!bloqueado">
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nome do Cliente</mat-label>
+          <input matInput type="text" formControlName="displayName" placeholder="Ex: João da Silva">
+          <mat-error *ngIf="cadastroForm.get('displayName')?.hasError('required')">Nome é obrigatório</mat-error>
+          <mat-error *ngIf="cadastroForm.get('displayName')?.hasError('minlength')">Mínimo de 3 caracteres</mat-error>
+          <mat-error *ngIf="cadastroForm.get('displayName')?.hasError('maxlength')">Máximo de 50 caracteres</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Quantidade de Itens</mat-label>
+          <input matInput type="number" formControlName="itens" min="1">
+          <mat-error *ngIf="cadastroForm.get('itens')?.hasError('required')">Itens são obrigatórios</mat-error>
+          <mat-error *ngIf="cadastroForm.get('itens')?.hasError('min')">Deve ser maior que 0</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Peso (em gramas)</mat-label>
+          <input matInput type="number" formControlName="peso" min="1">
+          <mat-error *ngIf="cadastroForm.get('peso')?.hasError('required')">Peso é obrigatório</mat-error>
+          <mat-error *ngIf="cadastroForm.get('peso')?.hasError('min')">Deve ser maior que 0</mat-error>
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" type="submit" [disabled]="cadastroForm.invalid" class="full-width mt-3">
+          Salvar Pedido
+        </button>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
