@@ -1,37 +1,42 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PedidoService, Pedido } from '../../services/pedido.service';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective, MatCardModule, MatButtonModule, RouterModule],
+  imports: [CommonModule, BaseChartDirective, MatCardModule, MatButtonModule, MatIconModule, RouterModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
 
   pedidos: Pedido[] = [];
+  pollingSubscription?: Subscription;
+  healthStatus: string = 'Carregando...';
 
-  // Gráfico de Barras (Pedidos por Status)
-  public barChartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-  };
+  // Cards de resumo
+  totalPedidos: number = 0;
+  totalProcessamento: number = 0;
+  totalPausados: number = 0;
+
+  // Gráfico de Barras
+  public barChartOptions: ChartConfiguration['options'] = { responsive: true };
   public barChartType: ChartType = 'bar';
   public barChartData: ChartData<'bar'> = {
     labels: ['EM_PROCESSAMENTO', 'PAUSADO', 'CANCELADO'],
     datasets: [{ data: [0, 0, 0], label: 'Total de Pedidos' }]
   };
 
-  // Gráfico de Pizza (Total vs Limite)
-  public pieChartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-  };
+  // Gráfico de Pizza
+  public pieChartOptions: ChartConfiguration['options'] = { responsive: true };
   public pieChartType: ChartType = 'pie';
   public pieChartData: ChartData<'pie', number[], string | string[]> = {
     labels: ['Pedidos Cadastrados', 'Vagas Restantes'],
@@ -42,20 +47,46 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarDados();
+    this.verificarSaudeAPI();
+
+    // Polling a cada 5 segundos (Diferencial)
+    this.pollingSubscription = interval(5000).subscribe(() => {
+      this.carregarDados();
+      this.verificarSaudeAPI();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+    }
+  }
+
+  verificarSaudeAPI(): void {
+    this.pedidoService.getHealth().subscribe({
+      next: (res) => this.healthStatus = res.status, // EX: 'UP'
+      error: () => this.healthStatus = 'DOWN'
+    });
   }
 
   carregarDados(): void {
     this.pedidoService.getPedidos().subscribe(data => {
       this.pedidos = data;
-      this.atualizarGraficos();
+      this.atualizarMetricas();
     });
   }
 
-  atualizarGraficos(): void {
-    // Barras
+  atualizarMetricas(): void {
     const proc = this.pedidos.filter(p => p.status === 'EM_PROCESSAMENTO').length;
     const pau = this.pedidos.filter(p => p.status === 'PAUSADO').length;
     const can = this.pedidos.filter(p => p.status === 'CANCELADO').length;
+    
+    // Cards
+    this.totalPedidos = this.pedidos.length;
+    this.totalProcessamento = proc;
+    this.totalPausados = pau;
+
+    // Barras
     this.barChartData.datasets[0].data = [proc, pau, can];
 
     // Pizza

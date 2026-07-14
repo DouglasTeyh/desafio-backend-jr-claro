@@ -15,6 +15,7 @@ export interface Pedido {
 })
 export class PedidoService {
   private apiUrl = 'http://localhost:8080/api/pedidos';
+  private healthUrl = 'http://localhost:8080/actuator/health';
 
   constructor(private http: HttpClient) { }
 
@@ -32,5 +33,9 @@ export class PedidoService {
 
   deletePedido(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getHealth(): Observable<any> {
+    return this.http.get<any>(this.healthUrl);
   }
 }
