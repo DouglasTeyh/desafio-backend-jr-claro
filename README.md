@@ -1,19 +1,50 @@
 # Desafio Backend Claro
 
-Projeto desenvolvido para o desafio técnico de Desenvolvedor Java Júnior. O foco inicial foi entregar os requisitos obrigatórios bem estruturados antes de partir para os diferenciais.
+Projeto desenvolvido para o desafio técnico. O repositório contém tanto a API REST (Spring Boot) quanto o Frontend (Angular), orquestrados via Docker para facilitar a execução.
+
+## Estrutura do Projeto
+
+- `/backend`: API construída com Java 17, Spring Boot 3 e banco em memória (H2).
+- `/frontend`: SPA construída com Angular 17, usando Angular Material e Chart.js.
+- `/grafana`: Arquivos de provisionamento automático do dashboard de métricas de negócio.
 
 ## Como rodar o projeto
 
-1. Entre na pasta `backend`: `cd backend`
-2. Suba a aplicação usando o Maven Wrapper: `.\mvnw spring-boot:run` (ou `./mvnw` no Linux/Mac)
-3. A API vai rodar na porta `8080`.
+A forma mais simples de testar toda a infraestrutura é via Docker Compose.
 
-O banco de dados já sobe com 3 pedidos iniciais pra facilitar os testes da interface.
+1. Na raiz do projeto, execute:
+   ```bash
+   docker-compose up -d --build
+   ```
+2. Acesse as interfaces no navegador:
+   - **Frontend:** http://localhost:4200
+   - **Swagger (Documentação da API):** http://localhost:8080/swagger-ui.html
+   - **Grafana (Dashboards de Métricas):** http://localhost:3000 (usuário: `admin`, senha: `admin`)
+   - **Prometheus (Coleta de Métricas):** http://localhost:9090
 
-## Algumas decisões que tomei
+*Nota: O banco de dados H2 é inicializado automaticamente com 3 pedidos para facilitar os testes da interface.*
 
-- **Banco em Memória (H2):** Como a persistência era livre, optei pelo H2. Ele sobe junto com a aplicação, o que facilita bastante na hora de avaliar o código, já que não exige configuração de banco externo.
-- **Regras de Negócio no Service:** Centralizei o controle do limite de 5 pedidos e a validação das mudanças de status no `PedidoService`. Achei melhor tirar essa responsabilidade do Controller, que ficou só com a parte de receber e devolver as respostas HTTP.
-- **Autenticação Básica (Dummy):** O endpoint `/api/auth/login` está lá e validando os campos, mas aceitando qualquer credencial não-vazia por enquanto. O objetivo foi garantir que o fluxo do frontend funcione logo de cara. O JWT real eu planejo adicionar depois como diferencial.
-- **Tratamento de Erros:** Usei `ResponseStatusException` pra lançar os erros com os códigos HTTP (400, 404, 422) nos lugares certos. É uma abordagem mais simples e direta do que montar um `@ControllerAdvice` completo pra um app pequeno.
-- **Logs:** Coloquei logs com SLF4J nas ações de criação, alteração e exclusão. Ajuda a ter um rastro claro do que acontece no sistema.
+## Decisões Técnicas
+
+- **Orquestração com Docker:** Empacotei a aplicação com Docker para padronizar o ambiente. O frontend é servido via Nginx para roteamento correto da SPA, e o backend roda com a imagem JRE 17 do Temurin.
+- **Observabilidade (Prometheus/Grafana):** Como diferencial, expus endpoints do Micrometer no Spring Boot (`/actuator/prometheus`). Fui além das métricas da JVM e adicionei métricas de negócio customizadas (total de pedidos e contagem por status). O Grafana já sobe provisionado com essas informações na tela inicial.
+- **Design no Frontend:** Utilize o Angular Material para componentização limpa. Implementei a comunicação com o backend mantendo pooling a cada 5 segundos nos gráficos e verificação da saúde da API (`/actuator/health`), além de ordenação e paginação na lista de pedidos.
+- **Regras de Negócio no Service:** O limite máximo de 5 pedidos simultâneos e o bloqueio de transições de status inválidas foram isolados na camada de `Service` do backend, mantendo os `Controllers` limpos.
+- **Autenticação Simples:** Mantive a rota de `/login` validando formato de e-mail e ativando os controles da UI, conforme escopo inicial focado na usabilidade, deixando o backend focado no CRUD de pedidos.
+
+## Desenvolvimento Local (Sem Docker)
+
+Caso prefira rodar as aplicações isoladamente:
+
+**Backend:**
+```bash
+cd backend
+./mvnw spring-boot:run
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm install
+npm start
+```
