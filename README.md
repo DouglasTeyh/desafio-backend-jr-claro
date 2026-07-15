@@ -27,8 +27,8 @@ Nota: O banco H2 inicia com 3 pedidos pré-cadastrados (DatabaseSeeder) para tes
 ## Telas da Aplicação
 
 ### 1. Login e Validação
-![Login](./docs/Captura%20de%20tela%202026-07-15%20002327.png)
-A tela de login possui validação no cliente. Se o e-mail for inválido, exibe erro e desabilita o botão, evitando chamadas desnecessárias à API. Com os dados corretos, o acesso é liberado.
+![Login](./docs/Captura%20de%20tela%202026-07-15%20002309.png)
+A tela de login possui validação no cliente. Se o e-mail for inválido, exibe erro e desabilita o botão, evitando chamadas desnecessárias à API. Com os dados corretos, o acesso é liberado (demonstrado em `./docs/Captura de tela 2026-07-15 002327.png`).
 
 ### 2. Dashboard de Monitoramento
 ![Dashboard](./docs/Captura%20de%20tela%202026-07-15%20002420.png)
@@ -42,7 +42,7 @@ O Dashboard exibe:
 A listagem consome a API e inclui paginação. Estão disponíveis botões de transição de status e exclusão. Regras de transição inválidas (como pausar um pedido já pausado) são validadas pela API.
 
 ### 4. Cadastro de Pedido
-![Cadastro](./docs/Captura%20de%20tela%202026-07-15%20002431.png)
+![Cadastro](./docs/Captura%20de%20tela%202026-07-15%20002455.png)
 Formulário com validação de campos. Se houver tentativa de criar o 6º pedido, a API retorna HTTP 400 (Bad Request) e a interface exibe a mensagem de erro retornada pelo backend através de um toast.
 
 ### 5. Documentação da API
@@ -50,7 +50,14 @@ Formulário com validação de campos. Se houver tentativa de criar o 6º pedido
 Integração com springdoc-openapi. As rotas estão disponíveis para testes diretos e consulta.
 
 ### 6. Observabilidade
+#### Grafana (Dashboard de Métricas)
 ![Grafana](./docs/Captura%20de%20tela%202026-07-15%20002714.png)
+
+#### Prometheus (Coleta de Métricas)
+![Prometheus](./docs/Captura%20de%20tela%202026-07-15%20002734.png)
+
+#### Spring Boot Actuator (/actuator/health)
+![Actuator](./docs/Captura%20de%20tela%202026-07-15%20002745.png)
 Dashboard customizado provisionado via Docker. Ele reflete as métricas de negócio (total cadastrado e status dos pedidos). O Prometheus coleta os dados via Spring Boot Actuator (/actuator/prometheus).
 
 ## Premissas e Decisões Técnicas
