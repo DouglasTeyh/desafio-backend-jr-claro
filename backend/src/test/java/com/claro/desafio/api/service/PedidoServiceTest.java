@@ -1,8 +1,8 @@
-package com.example.demo.service;
+package com.claro.desafio.api.service;
 
-import com.example.demo.model.Pedido;
-import com.example.demo.model.StatusPedido;
-import com.example.demo.repository.PedidoRepository;
+import com.claro.desafio.api.model.Pedido;
+import com.claro.desafio.api.model.StatusPedido;
+import com.claro.desafio.api.repository.PedidoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

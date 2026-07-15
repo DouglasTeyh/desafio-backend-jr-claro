@@ -1,8 +1,8 @@
-package com.example.demo.config;
+package com.claro.desafio.api.config;
 
-import com.example.demo.model.Pedido;
-import com.example.demo.model.StatusPedido;
-import com.example.demo.repository.PedidoRepository;
+import com.claro.desafio.api.model.Pedido;
+import com.claro.desafio.api.model.StatusPedido;
+import com.claro.desafio.api.repository.PedidoRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

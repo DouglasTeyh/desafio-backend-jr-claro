@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.claro.desafio.api.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

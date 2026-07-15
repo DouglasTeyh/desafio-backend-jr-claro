@@ -1,4 +1,4 @@
-package com.example.demo.security;
+package com.claro.desafio.api.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,6 +25,12 @@ public class JwtFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+
+        // Ignorar requisicoes de preflight CORS (OPTIONS)
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String path = request.getRequestURI();
 

@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.claro.desafio.api.model;
 
 public enum StatusPedido {
     EM_PROCESSAMENTO,

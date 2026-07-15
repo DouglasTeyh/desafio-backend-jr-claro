@@ -1,4 +1,4 @@
-package com.example.demo.security;
+package com.claro.desafio.api.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

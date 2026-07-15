@@ -1,8 +1,8 @@
-package com.example.demo.metrics;
+package com.claro.desafio.api.metrics;
 
-import com.example.demo.repository.PedidoRepository;
-import com.example.demo.repository.PedidoRepository;
-import com.example.demo.model.StatusPedido;
+import com.claro.desafio.api.repository.PedidoRepository;
+import com.claro.desafio.api.repository.PedidoRepository;
+import com.claro.desafio.api.model.StatusPedido;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.claro.desafio.api.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

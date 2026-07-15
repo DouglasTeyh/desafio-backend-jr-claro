@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.claro.desafio.api.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,13 +10,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-    private final com.example.demo.security.JwtUtil jwtUtil;
+    private final com.claro.desafio.api.security.JwtUtil jwtUtil;
 
-    public AuthController(com.example.demo.security.JwtUtil jwtUtil) {
+    public AuthController(com.claro.desafio.api.security.JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
 

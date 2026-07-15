@@ -1,10 +1,10 @@
-package com.example.demo;
+package com.claro.desafio.api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DemoApplicationTests {
+class DesafioApplicationTests {
 
 	@Test
 	void contextLoads() {

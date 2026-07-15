@@ -1,8 +1,8 @@
-package com.example.demo.controller;
+package com.claro.desafio.api.controller;
 
-import com.example.demo.model.Pedido;
-import com.example.demo.model.StatusPedido;
-import com.example.demo.service.PedidoService;
+import com.claro.desafio.api.model.Pedido;
+import com.claro.desafio.api.model.StatusPedido;
+import com.claro.desafio.api.service.PedidoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,13 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(PedidoController.class)
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+
+@WebMvcTest(controllers = PedidoController.class, excludeFilters = @ComponentScan.Filter(
+        type = FilterType.ASSIGNABLE_TYPE,
+        classes = com.claro.desafio.api.security.JwtFilter.class
+))
 class PedidoControllerTest {
 
     @Autowired

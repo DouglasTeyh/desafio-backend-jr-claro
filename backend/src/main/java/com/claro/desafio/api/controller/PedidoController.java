@@ -1,8 +1,8 @@
-package com.example.demo.controller;
+package com.claro.desafio.api.controller;
 
-import com.example.demo.model.Pedido;
-import com.example.demo.model.StatusPedido;
-import com.example.demo.service.PedidoService;
+import com.claro.desafio.api.model.Pedido;
+import com.claro.desafio.api.model.StatusPedido;
+import com.claro.desafio.api.service.PedidoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pedidos")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PedidoController {
 
     private final PedidoService service;
