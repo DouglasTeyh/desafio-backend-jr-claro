@@ -1,3 +1,6 @@
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CadastroComponent } from './cadastro.component';
@@ -8,7 +11,7 @@ describe('CadastroComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CadastroComponent]
+      imports: [HttpClientTestingModule, BrowserAnimationsModule, RouterTestingModule, CadastroComponent]
     })
     .compileComponents();
     
