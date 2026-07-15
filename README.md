@@ -59,6 +59,8 @@ Dashboard customizado provisionado via Docker. Ele reflete as métricas de negó
 2. Tratamento de Exceções: A aplicação utiliza ResponseStatusException para retornar códigos semânticos (ex: HTTP 400 e 422) em regras de negócio violadas, em vez de retornar HTTP 500.
 3. Observabilidade: Foi integrado o Micrometer para métricas de negócio na classe PedidoMetrics. Os dados populam o Grafana diretamente, sem consultas extras ao banco.
 4. Testes: O backend inclui testes com JUnit para controllers e services. O frontend possui testes com Jasmine.
+5. Segurança (JWT): Foi implementada autenticação baseada em JWT. O backend gera o token no login e o valida em rotas privadas usando um filtro de servlet personalizado (JwtFilter). No frontend, o token é guardado e anexado em cada requisição de API usando um HttpInterceptorFn, com as rotas internas protegidas por Route Guard (CanActivateFn).
+6. Usabilidade e UX: A listagem de pedidos inclui paginação, ordenação, busca textual por nome do cliente e filtro por status. Além disso, indicadores de carregamento visual (spinners) são mostrados no cadastro e listagem durante operações assíncronas.
 
 ## Trade-offs
 
@@ -88,9 +90,6 @@ npm start
 
 ## O que faria diferente com mais tempo
 
-- **JWT real no backend:** A autenticação atual retorna 200/401 sem token. Com mais tempo, integraria o Spring Security com geração de JWT, um HTTP Interceptor no Angular para anexar o token em cada requisição e um Route Guard (CanActivate) protegendo as rotas internas.
 - **Banco de dados persistente:** Substituiria o H2 por PostgreSQL, adicionando migrations com Flyway para controle de versão do schema.
 - **Testes de integração:** Adicionaria testes de integração no backend com `@SpringBootTest` e `TestRestTemplate`, cobrindo o fluxo completo de criação e transição de status em banco real.
-- **Feedback visual de carregamento:** Adicionaria um spinner (MatProgressSpinner) durante requisições assíncronas no frontend para melhorar a experiência do usuário.
-- **Filtro e busca na listagem:** Implementaria filtro por status e busca por nome do cliente diretamente na tabela da listagem.
 - **Server-Sent Events no dashboard:** Substituiria o polling de 5 segundos por SSE (ou WebSocket), onde o backend notifica o frontend apenas quando um pedido é criado, atualizado ou excluído, eliminando requisições desnecessárias e reduzindo a carga no servidor.
