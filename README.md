@@ -93,3 +93,4 @@ npm start
 - **Testes de integração:** Adicionaria testes de integração no backend com `@SpringBootTest` e `TestRestTemplate`, cobrindo o fluxo completo de criação e transição de status em banco real.
 - **Feedback visual de carregamento:** Adicionaria um spinner (MatProgressSpinner) durante requisições assíncronas no frontend para melhorar a experiência do usuário.
 - **Filtro e busca na listagem:** Implementaria filtro por status e busca por nome do cliente diretamente na tabela da listagem.
+- **Server-Sent Events no dashboard:** Substituiria o polling de 5 segundos por SSE (ou WebSocket), onde o backend notifica o frontend apenas quando um pedido é criado, atualizado ou excluído, eliminando requisições desnecessárias e reduzindo a carga no servidor.
