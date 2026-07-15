@@ -14,6 +14,11 @@ import java.util.Map;
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    private final com.example.demo.security.JwtUtil jwtUtil;
+
+    public AuthController(com.example.demo.security.JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
 
     @PostMapping("/login")
     public Map<String, String> login(@RequestBody Map<String, String> credentials) {
@@ -27,8 +32,8 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais inválidas");
         }
 
-        // Dummy auth (obrigatório) - aceita qualquer email/senha preenchidos
         logger.info("Login realizado com sucesso para o email: {}", email);
-        return Map.of("message", "Login realizado com sucesso");
+        String token = jwtUtil.generateToken(email);
+        return Map.of("token", token);
     }
 }
