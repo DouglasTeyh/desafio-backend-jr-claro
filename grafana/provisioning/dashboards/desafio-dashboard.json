@@ -1,0 +1,24 @@
+{
+  "title": "Desafio Claro - Dashboard",
+  "timezone": "browser",
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Total de Pedidos",
+      "gridPos": { "h": 8, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "pedidos_total", "refId": "A" }
+      ]
+    },
+    {
+      "type": "bargauge",
+      "title": "Pedidos por Status",
+      "gridPos": { "h": 8, "w": 18, "x": 6, "y": 0 },
+      "targets": [
+        { "expr": "pedidos_por_status", "legendFormat": "{{status}}", "refId": "A" }
+      ]
+    }
+  ]
+}
