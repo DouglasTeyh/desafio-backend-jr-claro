@@ -34,9 +34,12 @@
           <mat-error *ngIf="cadastroForm.get('peso')?.hasError('min')">Deve ser maior que 0</mat-error>
         </mat-form-field>
 
-        <button mat-flat-button color="primary" type="submit" [disabled]="cadastroForm.invalid" class="full-width mt-3">
-          Salvar Pedido
-        </button>
+        <div class="submit-area">
+          <mat-spinner *ngIf="enviando" diameter="36"></mat-spinner>
+          <button *ngIf="!enviando" mat-flat-button color="primary" type="submit" [disabled]="cadastroForm.invalid" class="full-width mt-3">
+            Salvar Pedido
+          </button>
+        </div>
 
       </form>
     </mat-card-content>

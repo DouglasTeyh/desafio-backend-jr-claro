@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-cadastro',
@@ -20,7 +21,8 @@ import { CommonModule } from '@angular/common';
     MatInputModule,
     MatButtonModule,
     MatSnackBarModule,
-    RouterModule
+    RouterModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './cadastro.component.html',
   styleUrl: './cadastro.component.scss'
@@ -28,6 +30,7 @@ import { CommonModule } from '@angular/common';
 export class CadastroComponent implements OnInit {
   cadastroForm: FormGroup;
   bloqueado: boolean = false;
+  enviando: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -58,6 +61,7 @@ export class CadastroComponent implements OnInit {
 
   onSubmit(): void {
     if (this.cadastroForm.valid && !this.bloqueado) {
+      this.enviando = true;
       const formValue = this.cadastroForm.value;
       const novoPedido = {
         ...formValue,
@@ -66,10 +70,12 @@ export class CadastroComponent implements OnInit {
 
       this.pedidoService.createPedido(novoPedido).subscribe({
         next: () => {
+          this.enviando = false;
           this.snackBar.open('Pedido cadastrado com sucesso!', 'Fechar', { duration: 3000 });
           this.router.navigate(['/listagem']);
         },
         error: () => {
+          this.enviando = false;
           this.salvarLocalStorage(novoPedido);
         }
       });
