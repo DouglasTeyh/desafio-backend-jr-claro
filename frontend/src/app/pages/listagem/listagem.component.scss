@@ -8,7 +8,24 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 16px;
+}
+
+.filtros-container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 20px;
+}
+
+.filtro-busca {
+  flex: 1;
+  min-width: 200px;
+}
+
+.filtro-status {
+  width: 220px;
 }
 
 table {

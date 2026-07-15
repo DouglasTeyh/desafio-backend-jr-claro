@@ -9,12 +9,21 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-listagem',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatSnackBarModule, RouterModule, MatPaginatorModule, MatSortModule, MatProgressSpinnerModule],
+  imports: [
+    CommonModule, FormsModule,
+    MatTableModule, MatButtonModule, MatIconModule, MatSnackBarModule,
+    RouterModule, MatPaginatorModule, MatSortModule, MatProgressSpinnerModule,
+    MatSelectModule, MatFormFieldModule, MatInputModule
+  ],
   templateUrl: './listagem.component.html',
   styleUrl: './listagem.component.scss'
 })
@@ -23,13 +32,36 @@ export class ListagemComponent implements OnInit {
   carregando = false;
   displayedColumns: string[] = ['cliente', 'itens', 'peso', 'status', 'acoes'];
 
+  filtroBusca: string = '';
+  filtroStatus: string = '';
+  statusOpcoes: string[] = ['EM_PROCESSAMENTO', 'PAUSADO', 'CANCELADO'];
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private pedidoService: PedidoService, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
+    this.pedidosData.filterPredicate = (pedido: Pedido, filtro: string) => {
+      const f = JSON.parse(filtro);
+      const nomeOk = !f.nome || pedido.displayName.toLowerCase().includes(f.nome.toLowerCase());
+      const statusOk = !f.status || pedido.status === f.status;
+      return nomeOk && statusOk;
+    };
     this.carregarPedidos();
+  }
+
+  aplicarFiltro(): void {
+    this.pedidosData.filter = JSON.stringify({
+      nome: this.filtroBusca,
+      status: this.filtroStatus
+    });
+  }
+
+  limparFiltros(): void {
+    this.filtroBusca = '';
+    this.filtroStatus = '';
+    this.pedidosData.filter = '';
   }
 
   carregarPedidos(): void {

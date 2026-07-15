@@ -9,6 +9,26 @@
     </div>
   </div>
 
+  <div class="filtros-container">
+    <mat-form-field appearance="outline" class="filtro-busca">
+      <mat-label>Buscar por cliente</mat-label>
+      <input matInput [(ngModel)]="filtroBusca" (ngModelChange)="aplicarFiltro()" placeholder="Nome do cliente">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filtro-status">
+      <mat-label>Filtrar por status</mat-label>
+      <mat-select [(ngModel)]="filtroStatus" (ngModelChange)="aplicarFiltro()">
+        <mat-option value="">Todos</mat-option>
+        <mat-option *ngFor="let s of statusOpcoes" [value]="s">{{s}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-button (click)="limparFiltros()" *ngIf="filtroBusca || filtroStatus">
+      Limpar filtros
+    </button>
+  </div>
+
   <div class="spinner-container" *ngIf="carregando">
     <mat-spinner diameter="48"></mat-spinner>
   </div>
