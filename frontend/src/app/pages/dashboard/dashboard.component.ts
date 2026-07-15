@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { PedidoService, Pedido } from '../../services/pedido.service';
 import { CommonModule } from '@angular/common';
-import { BaseChartDirective } from 'ng2-charts';
+import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,7 +12,7 @@ import { interval, Subscription } from 'rxjs';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective, MatCardModule, MatButtonModule, MatIconModule, RouterModule],
+  imports: [CommonModule, NgChartsModule, MatCardModule, MatButtonModule, MatIconModule, RouterModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -64,7 +64,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   verificarSaudeAPI(): void {
     this.pedidoService.getHealth().subscribe({
-      next: (res) => this.healthStatus = res.status, // EX: 'UP'
+      next: (res) => {
+        this.healthStatus = res.status;
+      },
       error: () => this.healthStatus = 'DOWN'
     });
   }
@@ -87,11 +89,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.totalPausados = pau;
 
     // Barras
-    this.barChartData.datasets[0].data = [proc, pau, can];
+    this.barChartData = {
+      ...this.barChartData,
+      datasets: [{ data: [proc, pau, can], label: 'Total de Pedidos' }]
+    };
 
     // Pizza
     const total = this.pedidos.length;
     const restantes = Math.max(5 - total, 0);
-    this.pieChartData.datasets[0].data = [total, restantes];
+    this.pieChartData = {
+      ...this.pieChartData,
+      datasets: [{ data: [total, restantes] }]
+    };
   }
 }
