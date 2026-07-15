@@ -1,65 +1,85 @@
 # Desafio Backend Claro
 
-Projeto desenvolvido para o desafio técnico de Desenvolvedor Java Júnior. A solução contempla a implementação de uma API RESTful em Spring Boot, uma interface Single Page Application (SPA) em Angular, e uma infraestrutura completa de observabilidade e orquestração.
+Projeto desenvolvido para o desafio técnico de Desenvolvedor Java Júnior. A solução implementa uma API RESTful em Spring Boot, uma interface Single Page Application (SPA) em Angular e infraestrutura de observabilidade com Grafana e Prometheus.
 
 ## Estrutura do Projeto
 
 - `/backend`: API construída com Java 17, Spring Boot 3 e banco em memória (H2).
-- `/frontend`: Aplicação web construída com Angular 17, utilizando Angular Material e Chart.js.
-- `/grafana`: Configurações para provisionamento automático de dashboards de monitoramento.
+- `/frontend`: Aplicação web construída com Angular 17, Angular Material e Chart.js.
+- `/grafana`: Configurações de provisionamento (Datasource e Dashboards) do Grafana.
 
-## Execução Rápida (Docker)
+## Execução com Docker
 
-A infraestrutura foi orquestrada com Docker Compose para facilitar a execução, isolamento e padronização do ambiente.
+A infraestrutura utiliza Docker Compose para rodar todos os serviços.
 
-1. Na raiz do projeto, execute o comando:
+1. Na raiz do projeto, execute:
    ```bash
    docker-compose up -d --build
    ```
-2. Após a inicialização, as interfaces estarão disponíveis nos seguintes endereços:
-   - **Frontend:** http://localhost:4200
-   - **Swagger (Documentação da API):** http://localhost:8080/swagger-ui.html
-   - **Grafana (Dashboards de Métricas):** http://localhost:3000 (Credenciais: `admin` / `admin`)
-   - **Prometheus (Coleta de Métricas):** http://localhost:9090
+2. Acesse os serviços nos seguintes endereços:
+   - Frontend: http://localhost:4200
+   - Swagger: http://localhost:8080/swagger-ui.html
+   - Grafana: http://localhost:3000 (Credenciais: admin / admin)
+   - Prometheus: http://localhost:9090
 
-*Nota: O banco de dados (H2) é inicializado automaticamente com 3 pedidos pré-cadastrados para facilitar a validação e testes exploratórios da interface.*
-
-## Decisões Arquiteturais e Técnicas
-
-### 1. Orquestração e Deploy
-O projeto foi containerizado para garantir que seja executado de maneira uniforme em qualquer ambiente. O frontend foi otimizado para produção e é servido através de um servidor Nginx, que já possui as configurações de roteamento (fallback para `index.html`) necessárias para SPAs. O backend utiliza a imagem otimizada JRE 17 do Eclipse Temurin.
+Nota: O banco H2 inicia com 3 pedidos pré-cadastrados (DatabaseSeeder) para testes.
 
 ## Telas da Aplicação
 
-### Dashboard (Frontend Angular)
-![Dashboard](./docs/dashboard.png)
+### 1. Login e Validação
+![Login](./docs/Captura%20de%20tela%202026-07-15%20002327.png)
+A tela de login possui validação no cliente. Se o e-mail for inválido, exibe erro e desabilita o botão, evitando chamadas desnecessárias à API. Com os dados corretos, o acesso é liberado.
 
-### Documentação da API (Swagger UI)
-![Swagger UI](./docs/swagger.png)
+### 2. Dashboard de Monitoramento
+![Dashboard](./docs/Captura%20de%20tela%202026-07-15%20002420.png)
+O Dashboard exibe:
+- Vagas ocupadas (3/5), indicando a regra de limite.
+- Contadores de pedidos por status.
+- Gráficos (Chart.js) com os dados atuais. No topo direito, o indicador "API Status: UP" confirma que o backend responde no endpoint /actuator/health.
 
-### 2. Observabilidade de Negócio
-Além das métricas tradicionais da JVM, a aplicação foi configurada para exportar métricas customizadas de negócio através do Micrometer (como o total absoluto de pedidos e a contagem agrupada por status). A stack do Prometheus e Grafana sobe automaticamente provisionada com a fonte de dados e um Dashboard interativo, demonstrando maturidade em monitoramento sistêmico.
+### 3. Listagem de Pedidos
+![Listagem](./docs/Captura%20de%20tela%202026-07-15%20002503.png)
+A listagem consome a API e inclui paginação. Estão disponíveis botões de transição de status e exclusão. Regras de transição inválidas (como pausar um pedido já pausado) são validadas pela API.
 
-### 3. Design da Interface (Frontend)
-Foi adotada a biblioteca Angular Material para assegurar a consistência visual, acessibilidade e componentização clara. Os gráficos do Dashboard utilizam Chart.js e recebem atualizações contínuas via *polling* do RxJS (a cada 5 segundos), provendo uma experiência em tempo real. Adicionalmente, implementou-se o recurso de paginação e ordenação na listagem, e a verificação do status de saúde da API conectada diretamente ao endpoint `/actuator/health` do backend.
+### 4. Cadastro de Pedido
+![Cadastro](./docs/Captura%20de%20tela%202026-07-15%20002431.png)
+Formulário com validação de campos. Se houver tentativa de criar o 6º pedido, a API retorna HTTP 400 (Bad Request) e a interface exibe a mensagem de erro retornada pelo backend através de um toast.
 
-### 4. Isolamento de Regras de Negócio (Backend)
-Seguindo os princípios de *Separation of Concerns* e SOLID, as validações mais complexas — como o limite estrito de 5 pedidos simultâneos na base e o bloqueio de transições de status inválidas — foram isoladas e encapsuladas na camada de `Service`. Isso garante que a camada de `Controller` permaneça responsável estritamente pelo roteamento e mapeamento de requisições HTTP, facilitando manutenções e testes.
+### 5. Documentação da API
+![Swagger UI](./docs/Captura%20de%20tela%202026-07-15%20002944.png)
+Integração com springdoc-openapi. As rotas estão disponíveis para testes diretos e consulta.
 
-### 5. Tratamento de Exceções e Respostas HTTP
-O lançamento de exceções do negócio foi integrado ao `ResponseStatusException`, garantindo que chamadas inválidas (como a criação de um 6º pedido) retornem o código semântico correto (HTTP 400 Bad Request ou HTTP 422 Unprocessable Entity), ao invés do genérico HTTP 500.
+### 6. Observabilidade
+![Grafana](./docs/Captura%20de%20tela%202026-07-15%20002714.png)
+Dashboard customizado provisionado via Docker. Ele reflete as métricas de negócio (total cadastrado e status dos pedidos). O Prometheus coleta os dados via Spring Boot Actuator (/actuator/prometheus).
 
-## Execução Isolada (Sem Docker)
+## Premissas e Decisões Técnicas
 
-Caso seja necessário executar e depurar os componentes individualmente:
+1. Separação de Responsabilidades (SOLID): A validação do limite de pedidos e transição de status foi isolada na camada Service. O Controller funciona apenas como roteador HTTP, facilitando testes.
+2. Tratamento de Exceções: A aplicação utiliza ResponseStatusException para retornar códigos semânticos (ex: HTTP 400 e 422) em regras de negócio violadas, em vez de retornar HTTP 500.
+3. Observabilidade: Foi integrado o Micrometer para métricas de negócio na classe PedidoMetrics. Os dados populam o Grafana diretamente, sem consultas extras ao banco.
+4. Testes: O backend inclui testes com JUnit para controllers e services. O frontend possui testes com Jasmine.
 
-**Backend:**
+## Trade-offs
+
+Durante o desenvolvimento, algumas escolhas foram necessárias dado o escopo do desafio técnico:
+
+1. Banco de Dados: Optou-se pelo H2 em memória em vez de um banco relacional como PostgreSQL. Isso facilita a execução para avaliação do projeto sem exigir configurações pesadas, embora um banco robusto fosse a escolha real para escalabilidade.
+2. Atualização em Tempo Real: O dashboard do frontend atualiza via polling a cada 5 segundos com RxJS, em vez de WebSockets. Para o escopo de 5 pedidos, o polling resolve o problema sem a complexidade de manter conexões ativas no servidor.
+3. Gerenciamento de Estado: O frontend não utiliza NgRx ou Redux. Como o objetivo principal era o backend, o estado é mantido nos services, evitando complexidade desnecessária no projeto Angular.
+
+## Execução Sem Docker
+
+Caso prefira executar as aplicações separadamente:
+
+Backend:
 ```bash
 cd backend
+./mvnw clean install
 ./mvnw spring-boot:run
 ```
 
-**Frontend:**
+Frontend:
 ```bash
 cd frontend
 npm install
