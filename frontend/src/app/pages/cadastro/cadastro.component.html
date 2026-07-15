@@ -16,7 +16,7 @@
           <mat-label>Nome do Cliente</mat-label>
           <input matInput type="text" formControlName="displayName" placeholder="Ex: João da Silva">
           <mat-error *ngIf="cadastroForm.get('displayName')?.hasError('required')">Nome é obrigatório</mat-error>
-          <mat-error *ngIf="cadastroForm.get('displayName')?.hasError('minlength')">Mínimo de 3 caracteres</mat-error>
+          <mat-error *ngIf="cadastroForm.get('displayName')?.hasError('minlength')">O nome deve ter no mínimo 5 caracteres</mat-error>
           <mat-error *ngIf="cadastroForm.get('displayName')?.hasError('maxlength')">Máximo de 50 caracteres</mat-error>
         </mat-form-field>
 

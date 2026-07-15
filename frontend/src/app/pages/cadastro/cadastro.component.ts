@@ -36,7 +36,7 @@ export class CadastroComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {
     this.cadastroForm = this.fb.group({
-      displayName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      displayName: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]],
       itens: [1, [Validators.required, Validators.min(1)]],
       peso: [100, [Validators.required, Validators.min(1)]] // em gramas
     });
@@ -69,10 +69,20 @@ export class CadastroComponent implements OnInit {
           this.snackBar.open('Pedido cadastrado com sucesso!', 'Fechar', { duration: 3000 });
           this.router.navigate(['/listagem']);
         },
-        error: (err) => {
-          this.snackBar.open('Erro ao cadastrar pedido (já existem 5 ou erro na API)', 'Fechar', { duration: 4000 });
+        error: () => {
+          this.salvarLocalStorage(novoPedido);
         }
       });
     }
+  }
+
+  private salvarLocalStorage(pedido: any): void {
+    const key = 'pedidos_offline';
+    const existentes: any[] = JSON.parse(localStorage.getItem(key) || '[]');
+    pedido.id = Date.now();
+    existentes.push(pedido);
+    localStorage.setItem(key, JSON.stringify(existentes));
+    this.snackBar.open('API indisponível. Pedido salvo localmente.', 'Fechar', { duration: 4000 });
+    this.router.navigate(['/listagem']);
   }
 }
