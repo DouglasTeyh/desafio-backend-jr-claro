@@ -8,17 +8,19 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-listagem',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatSnackBarModule, RouterModule, MatPaginatorModule, MatSortModule],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatSnackBarModule, RouterModule, MatPaginatorModule, MatSortModule, MatProgressSpinnerModule],
   templateUrl: './listagem.component.html',
   styleUrl: './listagem.component.scss'
 })
 export class ListagemComponent implements OnInit {
   pedidosData = new MatTableDataSource<Pedido>([]);
+  carregando = false;
   displayedColumns: string[] = ['cliente', 'itens', 'peso', 'status', 'acoes'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -31,13 +33,18 @@ export class ListagemComponent implements OnInit {
   }
 
   carregarPedidos(): void {
+    this.carregando = true;
     this.pedidoService.getPedidos().subscribe({
       next: (data) => {
         this.pedidosData.data = data;
         this.pedidosData.paginator = this.paginator;
         this.pedidosData.sort = this.sort;
+        this.carregando = false;
       },
-      error: () => this.snackBar.open('Erro ao carregar pedidos', 'Fechar', { duration: 3000 })
+      error: () => {
+        this.snackBar.open('Erro ao carregar pedidos', 'Fechar', { duration: 3000 });
+        this.carregando = false;
+      }
     });
   }
 
