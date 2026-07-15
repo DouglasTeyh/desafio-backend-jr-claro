@@ -1,22 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { PedidoService, Pedido } from '../../services/pedido.service';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-listagem',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatSnackBarModule, RouterModule],
+  imports: [CommonModule, MatTableModule, MatButtonModule, MatIconModule, MatSnackBarModule, RouterModule, MatPaginatorModule, MatSortModule],
   templateUrl: './listagem.component.html',
   styleUrl: './listagem.component.scss'
 })
 export class ListagemComponent implements OnInit {
-  pedidos: Pedido[] = [];
+  pedidosData = new MatTableDataSource<Pedido>([]);
   displayedColumns: string[] = ['cliente', 'itens', 'peso', 'status', 'acoes'];
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private pedidoService: PedidoService, private snackBar: MatSnackBar) {}
 
@@ -26,13 +32,17 @@ export class ListagemComponent implements OnInit {
 
   carregarPedidos(): void {
     this.pedidoService.getPedidos().subscribe({
-      next: (data) => this.pedidos = data,
+      next: (data) => {
+        this.pedidosData.data = data;
+        this.pedidosData.paginator = this.paginator;
+        this.pedidosData.sort = this.sort;
+      },
       error: () => this.snackBar.open('Erro ao carregar pedidos', 'Fechar', { duration: 3000 })
     });
   }
 
   podeAdicionar(): boolean {
-    return this.pedidos.length < 5;
+    return this.pedidosData.data.length < 5;
   }
 
   podeMudarStatus(atual: string, alvo: string): boolean {
