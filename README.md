@@ -85,3 +85,11 @@ cd frontend
 npm install
 npm start
 ```
+
+## O que faria diferente com mais tempo
+
+- **JWT real no backend:** A autenticação atual retorna 200/401 sem token. Com mais tempo, integraria o Spring Security com geração de JWT, um HTTP Interceptor no Angular para anexar o token em cada requisição e um Route Guard (CanActivate) protegendo as rotas internas.
+- **Banco de dados persistente:** Substituiria o H2 por PostgreSQL, adicionando migrations com Flyway para controle de versão do schema.
+- **Testes de integração:** Adicionaria testes de integração no backend com `@SpringBootTest` e `TestRestTemplate`, cobrindo o fluxo completo de criação e transição de status em banco real.
+- **Feedback visual de carregamento:** Adicionaria um spinner (MatProgressSpinner) durante requisições assíncronas no frontend para melhorar a experiência do usuário.
+- **Filtro e busca na listagem:** Implementaria filtro por status e busca por nome do cliente diretamente na tabela da listagem.
